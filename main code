@@ -1,0 +1,137 @@
+package cinema;
+import java.util.*;
+public class Cinema {
+
+    public static void main(String[] args) {
+        
+        Scanner scan = new Scanner(System.in);
+        
+        System.out.println("Enter the number of rows:");
+        int rows = scan.nextInt();
+        System.out.println("Enter the number of seats in each row:");
+        int seats = scan.nextInt();
+        
+        boolean working = true;
+        
+        char[][] cinema = new char[rows][];
+        for (int i = 0; i < rows; i++) {
+            cinema[i] = new char[seats];
+            for (int j = 0; j < seats; j++) {
+                cinema[i][j] = 'S';
+            }
+        }
+        
+        while (working) {
+        System.out.println("1. Show the seats\n2. Buy a ticket\n3. Statistics\n0. Exit");
+        switch (scan.nextInt()) {
+            case 1:
+                printSeats(rows, seats, cinema);
+                break;
+            case 2:
+                buyTickets(cinema, rows, seats);
+                break;
+            case 3:
+                showStatistics(cinema, rows, seats);
+                break;
+            case 0:
+                working = false;
+                break;
+            }
+        }
+    }   
+    
+    public static void printSeats(int rows, int seats, char[][] cinema) {
+        
+        System.out.print("Cinema:\n  ");
+        for (int k = 0; k < seats; k++) {
+            System.out.print((k + 1) + " ");
+        }
+        System.out.println();
+        for (int l = 0; l < rows; l++) {
+            System.out.print((l + 1) + " ");
+            for (int p = 0; p < seats; p++) {
+                System.out.print(cinema[l][p] + " ");
+            }
+        System.out.println();
+        }
+    }
+    
+    public static void buyTickets(char[][] cinema, int rows, int seats) {
+        
+        Scanner scan = new Scanner(System.in);
+        int price = 0;
+        boolean incorrect = true;
+        int RowNum = 0;
+        int SeatNum = 0;
+        
+        while (incorrect) {
+            System.out.println("Enter a row number:");
+            RowNum = scan.nextInt();
+            System.out.println("Enter a seat number in that row:");
+            SeatNum = scan.nextInt();
+            if (RowNum < 0 || SeatNum < 0 || RowNum > rows || SeatNum > seats) {
+                System.out.println("Wrong input!");
+            } else if (cinema[RowNum - 1][SeatNum - 1] == 'B') {
+                System.out.println("That ticket has already been purchased!");
+            } else {
+                incorrect = false;
+            }
+        }
+                
+        if (rows * seats <= 60) {
+            price = 10;
+        } else {
+            if (RowNum <= rows / 2) {
+                price = 10;
+            } else {
+                price = 8;
+                }
+            }
+                
+        System.out.println("Ticket price: $" + price);
+        cinema[RowNum - 1][SeatNum - 1] = 'B';
+    }
+    
+    public static void showStatistics(char[][] cinema, int rows, int seats) {
+        
+        int ticketsBought = 0;
+        for (char[] arr : cinema) {
+            for (char ch : arr) {
+                if (ch == 'B') {
+                    ticketsBought++;
+                }
+            }
+        }
+        System.out.println("Number of purchased tickets: " + ticketsBought);
+        
+        if (ticketsBought != 0) {
+        float percent = (float)ticketsBought / (rows * seats) * 100;
+        String percentPrint = String.format("Percentage: %.2f%%", percent);
+        System.out.println(percentPrint);
+        } else {
+            System.out.println("Percentage: 0.00%");
+        }
+        
+        int income = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < seats; j++) {
+                if (rows * seats <= 60 && cinema[i][j] == 'B') {
+                    income += 10;
+                } else if ((rows * seats) > 60 && i < (rows / 2) && cinema[i][j] == 'B') {
+                    income += 10;
+                } else if ((rows * seats) > 60 && i >= (rows / 2) && cinema[i][j] == 'B') {
+                    income += 8;
+                }
+            }
+        }
+        System.out.println("Current income: $" + income);
+                
+        int overallIncome = 0;
+        if (rows * seats <= 60) {
+            overallIncome = 10 * rows * seats;
+        } else {
+            overallIncome = (10 * (rows / 2) * seats) + (8 * (rows - rows / 2) * seats);
+        }
+        System.out.println("Total income: $" + overallIncome);
+    }
+}
